@@ -23,7 +23,7 @@ pub struct ChromeCookie {
 }
 
 #[derive(Debug)]
-pub struct History {
+pub struct ChromeHistory {
     pub url: String,
     pub title: String,
     pub visit_count: u64,
@@ -31,7 +31,7 @@ pub struct History {
 }
 
 #[derive(Debug)]
-pub struct Download {
+pub struct ChromeDownload {
     pub target_path: String,
     pub tab_url: String,
     pub total_bytes: u64,
@@ -41,11 +41,11 @@ pub struct Download {
 }
 
 #[derive(Debug)]
-pub struct Bookmark {
+pub struct ChromeBookmark {
 }
 
 #[derive(Debug)]
-pub struct CreditCard {
+pub struct ChromeCreditCard {
     pub guid: String,
     pub name_on_card: String,
     pub expiration_month: u64,
