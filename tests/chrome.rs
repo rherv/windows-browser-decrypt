@@ -1,9 +1,15 @@
 #[cfg(test)]
 mod chrome {
-    use windows_browser_decrypt::chrome_exporter::decrypt;
+    use windows_browser_decrypt::chrome::*;
 
     #[test]
     fn test_chrome() {
-        decrypt();
+        let chrome_instances = export().unwrap();
+
+        for instance in chrome_instances {
+            for user in instance.get_users() {
+                println!("{:?}", user.get_cookies().unwrap());
+            }
+        }
     }
 }

@@ -55,9 +55,6 @@ pub struct CreditCard {
     pub nickname: String,
 }
 
-
-
-
 #[derive(Clone, Debug)]  // Derive the Clone trait for ChromeItem
 #[derive(Eq, Hash, PartialEq)]
 pub enum ChromeItem {

@@ -1,6 +1,4 @@
-pub mod chrome_exporter;
+pub mod chrome;
 
 mod util;
 mod decrypt;
-mod chrome_item;
-mod chrome_profile;

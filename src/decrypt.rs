@@ -20,11 +20,7 @@ pub fn aes_gcm_256(key_buf: &mut [u8], pwd_buf: Vec<u8>) -> Result<String, Strin
 }
 
 pub fn dpapi_crypt_unprotect_data(mut data_buf: Vec<u8>) -> Result<Vec<u8>, String> {
-    println!("{:?}", data_buf.clone());
-    println!("{:?}", String::from_utf8_lossy(data_buf.as_slice()).into_owned());
-    let buf_ptr = data_buf.as_mut_ptr();
-    let buf_len = data_buf.len();
-    let mut source = CRYPT_INTEGER_BLOB {
+    let source = CRYPT_INTEGER_BLOB {
         cbData: data_buf.len() as u32,
         pbData: data_buf.as_mut_ptr(),
     };
@@ -54,19 +50,6 @@ pub fn dpapi_crypt_unprotect_data(mut data_buf: Vec<u8>) -> Result<Vec<u8>, Stri
             output.pbData, output.cbData as usize, output.cbData as usize
         );
     }
-
-    /*
-    let result = unsafe { result.assume_init() };
-
-    let result_str = String::from_utf8_lossy(unsafe {
-            &*slice_from_raw_parts(
-                result.pbData,
-                result.cbData as usize,
-            )
-        }
-    ).to_string();
-     */
-
 
     Ok(out_key)
 }

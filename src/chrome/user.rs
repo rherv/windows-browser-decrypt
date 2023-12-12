@@ -3,18 +3,19 @@ use std::{fs, io};
 use std::path::PathBuf;
 use rusqlite::Connection;
 use tempfile::TempDir;
-use crate::chrome_item::{ChromeCookie, ChromeItem, ChromeLogin};
+use crate::chrome::item::{ChromeCookie, ChromeItem, ChromeLogin};
 use crate::decrypt::aes_gcm_256;
 
-pub struct ChromeProfile {
-    pub tmp_dir: TempDir,
+#[derive(Clone)]
+pub struct ChromeUser {
+    pub tmp_dir: PathBuf,
     pub master_key: Vec<u8>,
-    pub items: HashMap<ChromeItem, PathBuf>,
+    items: HashMap<PathBuf, ChromeItem>,
 }
-impl ChromeProfile {
-    pub fn new(master_key: Vec<u8>) -> io::Result<ChromeProfile> {
-        let cp = ChromeProfile {
-            tmp_dir: TempDir::new()?,
+impl ChromeUser {
+    pub fn new(master_key: Vec<u8>) -> io::Result<ChromeUser> {
+        let cp = ChromeUser {
+            tmp_dir: TempDir::new()?.into_path(),
             master_key,
             items: HashMap::new(),
         };
@@ -23,14 +24,18 @@ impl ChromeProfile {
     }
 
     pub fn add_item(&mut self, item: ChromeItem, file_path: PathBuf) {
-        let dest = self.tmp_dir.path().join(ChromeItem::temp_name(&item));
-        self.items.insert(item.clone(), dest.clone());
+        let dest = self.tmp_dir.join(ChromeItem::temp_name(&item));
+        self.items.insert(dest.clone(), item.clone());
 
         fs::copy(file_path, dest).expect("TODO: panic message");
     }
 
+    pub fn get_items(&self) -> Vec<ChromeItem> {
+        self.items.clone().into_values().collect()
+    }
+
     pub fn read_login_data(&self) -> Result<(), String> {
-        let path = self.tmp_dir.path().join(ChromeItem::temp_name(&ChromeItem::LoginData));
+        let path = self.tmp_dir.join(ChromeItem::temp_name(&ChromeItem::LoginData));
         let conn = Connection::open(path.as_path()).map_err(|e| {
             e.to_string()
         })?;
@@ -63,8 +68,10 @@ impl ChromeProfile {
         Ok(())
     }
 
-    pub fn read_cookies(&self) -> Result<(), String> {
-        let path = self.tmp_dir.path().join(ChromeItem::temp_name(&ChromeItem::Cookies));
+    pub fn get_cookies(&self) -> Result<Vec<ChromeCookie>, String> {
+        let mut output = Vec::new();
+
+        let path = self.tmp_dir.join(ChromeItem::temp_name(&ChromeItem::Cookies));
         let conn = Connection::open(path.as_path()).map_err(|e| {
             e.to_string()
         })?;
@@ -96,11 +103,16 @@ impl ChromeProfile {
             })
         }).map_err(|e| e.to_string())?;
 
-        for login in login_iter {
-            println!("Found cookie {:?}", login.unwrap())
+        for cookie in login_iter {
+            match cookie {
+                Ok(c) => output.push(c),
+                Err(_) => {
+                    continue
+                }
+            }
         };
 
-        Ok(())
+        Ok(output)
     }
 
     pub fn read_web_data() -> Result<(), String>{
