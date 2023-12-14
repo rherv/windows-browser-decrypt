@@ -8,11 +8,11 @@ mod chrome {
 
         for instance in chrome_instances {
             for user in instance.get_users() {
-                println!("{:?}", user.get_cookies().unwrap_or(Vec::new()));
-                println!("{:?}", user.get_logins().unwrap());
-                println!("{:?}", user.get_history().unwrap());
-                println!("{:?}", user.get_credit_cards().unwrap());
-                println!("{:?}", user.get_items())
+                println!("Logins: {:?}", user.get_logins());
+                println!("Cookies: {:?}", user.get_cookies());
+                println!("History: {:?}", user.get_history());
+                println!("Credit Cards: {:?}", user.get_credit_cards());
+                println!("Items: {:?}", user.get_items())
             }
         }
     }

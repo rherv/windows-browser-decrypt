@@ -1,11 +1,10 @@
 use std::path::PathBuf;
-use crate::chrome::error::ExporterError;
+use crate::error::ExporterError;
 use crate::chrome::instance::ChromeInstance;
 
 pub mod instance;
 mod item;
 mod user;
-mod error;
 
 pub fn export() -> Result<Vec<ChromeInstance>, ExporterError> {
     let mut output: Vec<ChromeInstance> = Vec::new();
@@ -19,6 +18,7 @@ pub fn export() -> Result<Vec<ChromeInstance>, ExporterError> {
 
     let chrome_dirs = vec![
         local_dir.join("Google/Chrome/User Data/"),
+        local_dir.join("Vivaldi/User Data/"),
     ];
 
     for dir in chrome_dirs {

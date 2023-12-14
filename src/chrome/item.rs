@@ -1,10 +1,12 @@
 use std::path::Path;
+use crate::decrypt::{aes_gcm_256, decrypt_value, dpapi_crypt_unprotect_data};
+use crate::error::ExporterError;
 
 #[derive(Debug)]
 pub struct ChromeLogin {
     pub origin_url: String,
-    pub username_value: String,
-    pub password_value: String,
+    pub username: String,
+    pub password: String,
     pub date_created: i64,
 }
 

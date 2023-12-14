@@ -1,32 +1,31 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use dirs;
-use crate::chrome::error::ExporterError;
 use crate::chrome::item::ChromeItem;
 use crate::chrome::user::ChromeUser;
+use crate::error::ExporterError;
 use crate::util::{get_files_recursive, read_local_state};
 
 
 pub struct ChromeInstance {
     dir: PathBuf,
-    master_key: Vec<u8>,
+    master_key: Option<Vec<u8>>,
     users: HashMap<PathBuf, ChromeUser>,
     files: Vec<PathBuf>
 }
 
 impl ChromeInstance {
     pub fn new(dir: impl AsRef<Path>) -> Result<ChromeInstance, ExporterError> {
-        let master_key = match read_local_state(dir.as_ref().join("Local State")) {
-            Ok(key) => key,
-            Err(e) => {
-                return Err(ExporterError::FailedToReadMasterKey(e.to_string()));
+        let master_key: Option<Vec<u8>> = match read_local_state(dir.as_ref().join("Local State")) {
+            Ok(key) => Some(key),
+            Err(_) => {
+                None
             }
         };
 
         let files: Vec<PathBuf> = get_files_recursive(dir.as_ref()).map_err(|e| {
             ExporterError::IO(e.to_string())
         })?;
-
 
         Ok(ChromeInstance {
             dir: dir.as_ref().to_path_buf(),
@@ -66,6 +65,8 @@ impl ChromeInstance {
                     profile_path = parent.to_path_buf();
                 }
             }
+
+            println!("{:?} {:?}", chrome_item, file.clone());
 
             self.users
                 .entry(profile_path.clone())
