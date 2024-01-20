@@ -65,9 +65,7 @@ impl ChromeUser {
             }).unwrap()
             .filter_map(|cl| {
                 let ok = cl.ok();
-                println!("{:?}", ok);
                 ok
-                //cl.ok()
             })
             .collect();
 
