@@ -4,7 +4,7 @@ use crate::chrome::instance::ChromeInstance;
 
 pub mod instance;
 mod item;
-mod user;
+pub mod user;
 
 pub fn export() -> Result<Vec<ChromeInstance>, ExporterError> {
     let mut output: Vec<ChromeInstance> = Vec::new();
