@@ -66,8 +66,6 @@ impl ChromeInstance {
                 }
             }
 
-            println!("{:?} {:?}", chrome_item, file.clone());
-
             self.users
                 .entry(profile_path.clone())
                 .or_insert_with(|| ChromeUser::new(self.master_key.clone()).unwrap())
