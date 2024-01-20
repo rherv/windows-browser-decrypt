@@ -3,7 +3,7 @@ use crate::error::ExporterError;
 use crate::chrome::instance::ChromeInstance;
 
 pub mod instance;
-mod item;
+pub mod item;
 pub mod user;
 
 pub fn export() -> Result<Vec<ChromeInstance>, ExporterError> {
